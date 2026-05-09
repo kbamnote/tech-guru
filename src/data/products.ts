@@ -1,0 +1,272 @@
+export interface Product {
+  id: number;
+  title: string;
+  category: 'kids' | 'edu' | 'content';
+  price: number;
+  rating: number;
+  reviews: number;
+  image: string;
+  badge?: string;
+  description: string;
+  features: string[];
+}
+
+export interface CartItem extends Product {
+  quantity: number;
+}
+
+export interface Review {
+  id: number;
+  productId: number;
+  name: string;
+  rating: number;
+  date: string;
+  comment: string;
+}
+
+export const categories = [
+  { id: 'kids', name: 'Kids eBooks', slug: 'kids', count: 12, image: '/images/kids-ebooks.png', description: 'Fun, interactive learning for little minds' },
+  { id: 'edu', name: 'Educational Books', slug: 'educational', count: 18, image: '/images/edu-books.png', description: 'Curriculum-aligned guides for every grade' },
+  { id: 'content', name: 'Content Bundles', slug: 'bundles', count: 9, image: '/images/content-bundles.png', description: 'Everything creators need to grow fast' },
+];
+
+export const products: Product[] = [
+  {
+    id: 101,
+    title: 'Activity Book School Bus',
+    category: 'kids',
+    price: 199,
+    rating: 4.8,
+    reviews: 120,
+    image: '/images/ActivityBookSchoolBus.jpeg',
+    badge: 'Bestseller',
+    description: 'A fun-filled activity book featuring school buses, puzzles, and interactive learning for preschoolers.',
+    features: ['Bus-themed puzzles', 'Coloring pages', 'Ages 3-6'],
+  },
+  {
+    id: 102,
+    title: 'Coloring Books Collection',
+    category: 'kids',
+    price: 149,
+    rating: 4.7,
+    reviews: 95,
+    image: '/images/ColoringBooks.jpeg',
+    description: 'Beautiful coloring pages designed to boost creativity and motor skills in young children.',
+    features: ['50+ coloring pages', 'Large illustrations', 'Ages 2-5'],
+  },
+  {
+    id: 103,
+    title: 'Kids Cyber Security Guide',
+    category: 'kids',
+    price: 249,
+    rating: 4.9,
+    reviews: 210,
+    image: '/images/CyberSecurity.jpeg',
+    badge: 'Educational',
+    description: 'A child-friendly introduction to staying safe online, understanding passwords, and digital citizenship.',
+    features: ['Internet safety tips', 'Interactive quizzes', 'Ages 8-12'],
+  },
+  {
+    id: 104,
+    title: 'Fun with Letters and Numbers',
+    category: 'kids',
+    price: 179,
+    rating: 4.6,
+    reviews: 80,
+    image: '/images/FunLettersNumbers.jpeg',
+    description: 'Engaging tracing and writing exercises to help toddlers master the alphabet and basic numbers.',
+    features: ['Alphabet tracing', 'Number counting 1-20', 'Ages 3-5'],
+  },
+  {
+    id: 105,
+    title: 'Kids Activity Busy Book',
+    category: 'kids',
+    price: 299,
+    rating: 4.9,
+    reviews: 320,
+    image: '/images/KidsActivityBusyBook.jpeg',
+    badge: 'Bestseller',
+    description: 'The ultimate busy book loaded with matching games, puzzles, and sensory activities to keep kids entertained for hours.',
+    features: ['Matching games', 'Velcro activities', 'Ages 2-6'],
+  },
+  {
+    id: 106,
+    title: 'Kids Funbook Adventures',
+    category: 'kids',
+    price: 199,
+    rating: 4.5,
+    reviews: 65,
+    image: '/images/KidsFunbook.jpeg',
+    description: 'A wonderful collection of stories and mini-games that take children on exciting adventures.',
+    features: ['Short stories', 'Mini games', 'Ages 4-8'],
+  },
+  {
+    id: 107,
+    title: 'Kids Tracing and Coloring',
+    category: 'kids',
+    price: 159,
+    rating: 4.8,
+    reviews: 140,
+    image: '/images/KidsTracingAndColoring.jpeg',
+    description: 'A perfect blend of tracing exercises and coloring fun to develop fine motor control.',
+    features: ['Line tracing', 'Shape coloring', 'Ages 3-5'],
+  },
+  {
+    id: 108,
+    title: 'Nursery Activity Books',
+    category: 'kids',
+    price: 229,
+    rating: 4.7,
+    reviews: 110,
+    image: '/images/NurseryActivityBooks.jpeg',
+    description: 'Comprehensive activity books designed specifically for nursery students to build foundational skills.',
+    features: ['Pre-writing skills', 'Basic shapes', 'Ages 2-4'],
+  },
+  {
+    id: 109,
+    title: 'Ramdan Kids Book',
+    category: 'kids',
+    price: 199,
+    rating: 4.9,
+    reviews: 200,
+    image: '/images/RamdanKidsBook.jpeg',
+    badge: 'Popular',
+    description: 'A special book celebrating Ramadan with children through beautiful stories, crafts, and daily activities.',
+    features: ['30 days of activities', 'Ramadan stories', 'Ages 4-10'],
+  },
+  {
+    id: 110,
+    title: 'Ramzan Activity Booklet',
+    category: 'kids',
+    price: 149,
+    rating: 4.8,
+    reviews: 150,
+    image: '/images/RamzanActivityBooklet.jpeg',
+    description: 'A handy booklet full of puzzles, coloring pages, and lessons centered around the holy month of Ramzan.',
+    features: ['Islamic puzzles', 'Coloring pages', 'Ages 5-10'],
+  },
+  {
+    id: 111,
+    title: 'Summer Activity Book',
+    category: 'kids',
+    price: 249,
+    rating: 4.6,
+    reviews: 90,
+    image: '/images/SummerActivityBook.jpeg',
+    badge: 'Seasonal',
+    description: 'Keep the summer slide away with this massive collection of summer-themed activities, reading logs, and crafts.',
+    features: ['Summer reading log', 'Outdoor activity ideas', 'Ages 5-9'],
+  },
+  {
+    id: 112,
+    title: 'Fun Activity Books Combo',
+    category: 'kids',
+    price: 399,
+    rating: 4.9,
+    reviews: 280,
+    image: '/images/funActivityBooks.jpeg',
+    badge: 'Value Pack',
+    description: 'A mega bundle of our best activity books, ensuring endless fun and learning for your little ones.',
+    features: ['3 books in 1', 'Over 150 pages', 'Ages 3-8'],
+  },
+  {
+    id: 4,
+    title: 'Class 10 Science Mastery',
+    category: 'edu',
+    price: 299,
+    rating: 4.8,
+    reviews: 210,
+    image: '/images/product-edu-1.jpg',
+    badge: 'Popular',
+    description: 'Comprehensive NCERT-aligned science guide covering Physics, Chemistry, and Biology. Simplified concepts, solved examples, and practice problems for exam success.',
+    features: ['Complete NCERT syllabus coverage', '500+ solved numerical problems', 'Chapter-wise revision notes', 'Previous year question bank', 'Full-length mock tests'],
+  },
+  {
+    id: 5,
+    title: 'Quantum Math for Competitive Exams',
+    category: 'edu',
+    price: 399,
+    rating: 4.7,
+    reviews: 156,
+    image: '/images/product-edu-2.jpg',
+    badge: 'Bestseller',
+    description: 'Advanced mathematics guide designed for JEE, NEET, and other competitive exams. From algebra to calculus, master every concept with step-by-step solutions.',
+    features: ['Advanced problem-solving techniques', 'Shortcut methods and tricks', '1000+ practice questions', 'Topic-wise difficulty grading', 'Detailed solution explanations'],
+  },
+  {
+    id: 6,
+    title: 'Indian History & Civics Guide',
+    category: 'edu',
+    price: 349,
+    rating: 4.6,
+    reviews: 118,
+    image: '/images/product-edu-3.jpg',
+    description: 'Journey through India\'s rich heritage with this beautifully crafted history and civics guide. From ancient civilizations to modern governance, explore it all.',
+    features: ['Ancient to Modern Indian history', 'Constitution and governance explained', 'Timeline charts and maps', 'Important dates and events', 'Exam-focused quick revisions'],
+  },
+  {
+    id: 7,
+    title: 'YouTube Growth Bundle',
+    category: 'content',
+    price: 599,
+    rating: 4.9,
+    reviews: 342,
+    image: '/images/product-bundle-1.jpg',
+    badge: 'Top Rated',
+    description: 'The ultimate toolkit for YouTube creators. Includes thumbnail templates, video scripts, SEO guides, analytics dashboards, and monetization strategies.',
+    features: ['50+ thumbnail templates (PSD/Canva)', '30 video script templates', 'YouTube SEO optimization guide', 'Analytics tracking spreadsheet', 'Monetization playbook'],
+  },
+  {
+    id: 8,
+    title: 'Social Media Creator Pack',
+    category: 'content',
+    price: 499,
+    rating: 4.8,
+    reviews: 278,
+    image: '/images/product-bundle-2.jpg',
+    description: 'All-in-one content creation bundle with Instagram templates, story designs, Reels scripts, hashtag strategies, and a complete content calendar system.',
+    features: ['100+ Instagram post templates', '30 story highlight covers', 'Reels script templates', 'Hashtag research guide', '12-month content calendar'],
+  },
+  {
+    id: 9,
+    title: 'Cinematic Video Presets',
+    category: 'content',
+    price: 449,
+    rating: 4.7,
+    reviews: 195,
+    image: '/images/product-bundle-3.jpg',
+    description: 'Professional-grade video editing LUTs and color grading presets. Transform your footage with Hollywood-style color science in one click.',
+    features: ['50 cinematic LUTs (.cube format)', 'Lightroom mobile presets', 'Color grading tutorial included', 'Before/after comparison guide', 'Compatible with all major editors'],
+  },
+];
+
+export const reviews: Review[] = [
+  { id: 1, productId: 1, name: 'Priya Sharma', rating: 5, date: '2026-04-15', comment: 'My 4-year-old absolutely loves this! The illustrations are beautiful and the tracing activities keep her engaged for hours.' },
+  { id: 2, productId: 1, name: 'Rahul Mehta', rating: 5, date: '2026-04-10', comment: 'Best alphabet book we have purchased. The print quality is excellent and the content is very well structured.' },
+  { id: 3, productId: 1, name: 'Ananya Gupta', rating: 4, date: '2026-03-28', comment: 'Great book for early learners. Would love to see more interactive elements in future editions.' },
+  { id: 4, productId: 4, name: 'Vikram Singh', rating: 5, date: '2026-04-20', comment: 'This science guide helped my son score 95% in his boards. The solved examples are incredibly helpful.' },
+  { id: 5, productId: 4, name: 'Sneha Patel', rating: 5, date: '2026-04-12', comment: 'NCERT coverage is thorough and the revision notes are a lifesaver before exams. Highly recommended!' },
+  { id: 6, productId: 7, name: 'Karan Joshi', rating: 5, date: '2026-04-18', comment: 'Went from 1K to 50K subscribers in 3 months using the strategies from this bundle. Absolutely worth every rupee!' },
+  { id: 7, productId: 7, name: 'Meera Reddy', rating: 4, date: '2026-04-05', comment: 'The thumbnail templates are fantastic. My CTR improved by 40% after using these designs.' },
+  { id: 8, productId: 2, name: 'Deepa Nair', rating: 5, date: '2026-04-08', comment: 'The stories are magical! My kids ask for a new tale every night. The moral lessons are beautifully woven in.' },
+  { id: 9, productId: 5, name: 'Arun Kumar', rating: 5, date: '2026-04-22', comment: 'Cracked JEE Mains with the help of this book. The shortcut methods save so much time during the exam.' },
+  { id: 10, productId: 8, name: 'Shruti Desai', rating: 5, date: '2026-04-14', comment: 'The content calendar alone is worth the price. My Instagram engagement has doubled since I started using this pack.' },
+];
+
+export const testimonials = [
+  { id: 1, name: 'Priya Sharma', role: 'Parent', text: 'The kids ebooks are absolutely delightful. My daughter looks forward to learning every day now. The quality exceeds everything else we have tried.' },
+  { id: 2, name: 'Vikram Singh', role: 'Teacher', text: 'As a science teacher, I recommend the educational guides to all my students. They are comprehensive, well-structured, and actually make learning enjoyable.' },
+  { id: 3, name: 'Karan Joshi', role: 'YouTuber', text: 'The content bundles transformed my channel. I went from struggling with thumbnails to having a consistent, professional brand look. Game changer!' },
+  { id: 4, name: 'Ananya Gupta', role: 'Homeschooling Mom', text: 'We use imtechguru.in resources for our homeschool curriculum. The educational books are thorough and the kids ebooks keep my little ones engaged for hours.' },
+  { id: 5, name: 'Rahul Mehta', role: 'Content Creator', text: 'The video presets bundle gave my footage a cinematic look that my audience immediately noticed. Comments asking about my color grade went up 10x!' },
+  { id: 6, name: 'Sneha Patel', role: 'Student', text: 'The Class 10 Science guide was my secret weapon for board exams. Scored 97%! The revision notes and practice problems are pure gold.' },
+];
+
+export const faqs = [
+  { id: 1, question: 'How do I receive my digital product after purchase?', answer: 'After completing your purchase, you will receive an instant download link on the order confirmation page. We also send the download link to your email within minutes. All products are delivered digitally — no shipping required!' },
+  { id: 2, question: 'What payment methods do you accept?', answer: 'We accept UPI (Google Pay, PhonePe, Paytm), all major credit and debit cards, and digital wallets. All transactions are processed securely through our trusted payment gateway.' },
+  { id: 3, question: 'Can I get a refund if I am not satisfied?', answer: 'Due to the digital nature of our products, we generally do not offer refunds once the download link has been accessed. However, if you experience any technical issues, please contact us and we will resolve it promptly.' },
+  { id: 4, question: 'Are the educational books aligned with the Indian curriculum?', answer: 'Yes! All our educational books are carefully aligned with NCERT and major state board curricula. They are designed by experienced educators who understand the Indian education system thoroughly.' },
+  { id: 5, question: 'Can I use the content bundles for commercial purposes?', answer: 'Absolutely! Our content creation bundles come with a commercial license. You can use the templates, presets, and resources for your own brand and client work without any attribution required.' },
+  { id: 6, question: 'Do you offer bulk discounts for schools or institutions?', answer: 'Yes, we offer special pricing for schools, coaching centers, and educational institutions. Please reach out to us through the contact page with your requirements and we will create a custom package for you.' },
+];
