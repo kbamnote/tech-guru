@@ -4,14 +4,26 @@ import { ArrowLeft, CreditCard, Wallet, Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 
+function loadScript(src: string) {
+  return new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'wallet'>('upi');
   const [form, setForm] = useState({ name: '', email: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    if (submitting) return;
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
@@ -27,10 +39,93 @@ export default function Checkout() {
       return;
     }
 
-    // Simulate order processing
     const orderId = 'ORD-' + Date.now().toString(36).toUpperCase();
-    clearCart();
-    navigate(`/order-confirmation?orderId=${orderId}&email=${encodeURIComponent(form.email)}`);
+    setSubmitting(true);
+
+    try {
+      // 1. Load Razorpay script
+      const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
+      if (!res) {
+        alert('Razorpay SDK failed to load. Are you online?');
+        setSubmitting(false);
+        return;
+      }
+
+      // 2. Create Order on Backend
+      const orderResponse = await fetch('https://tech-guru-backend-production.up.railway.app/api/orders/create-razorpay-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: totalPrice }),
+      });
+      const orderData = await orderResponse.json();
+
+      if (!orderData.success) {
+        console.error('Order creation failed:', orderData);
+        alert(`Failed to create order on server: ${orderData.error || 'Unknown error'}`);
+        setSubmitting(false);
+        return;
+      }
+
+      // 3. Fetch Razorpay key ID
+      const keyResponse = await fetch('https://tech-guru-backend-production.up.railway.app/api/orders/razorpay-key');
+      const keyData = await keyResponse.json();
+
+      // 4. Initialize Razorpay Checkout
+      const options = {
+        key: keyData.key,
+        amount: orderData.order.amount,
+        currency: "INR",
+        name: "ImTechGuru",
+        description: "Test Transaction",
+        order_id: orderData.order.id,
+        handler: async function (response: any) {
+          try {
+            // 5. Verify and Save Order on Backend
+            await fetch('https://tech-guru-backend-production.up.railway.app/api/orders', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: form.name,
+                email: form.email,
+                orderId: orderId,
+                paymentMethod: paymentMethod,
+                orderTotal: totalPrice,
+                items: items,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              }),
+            });
+            
+            clearCart();
+            navigate(`/order-confirmation?orderId=${orderId}&email=${encodeURIComponent(form.email)}`);
+          } catch (err) {
+            console.error('Error saving final order:', err);
+            alert('Payment verified but failed to save order.');
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        prefill: {
+          name: form.name,
+          email: form.email,
+        },
+        theme: {
+          color: "#1a1a1a",
+        },
+      };
+
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.on('payment.failed', function (response: any) {
+        alert(response.error.description);
+        setSubmitting(false);
+      });
+      paymentObject.open();
+
+    } catch (err) {
+      console.error('Checkout error:', err);
+      setSubmitting(false);
+    }
   };
 
   if (items.length === 0) {
@@ -161,9 +256,10 @@ export default function Checkout() {
 
               <button
                 type="submit"
-                className="mt-6 w-full py-4 bg-[#1a1a1a] text-white text-sm font-body font-500 uppercase tracking-wider rounded hover:bg-[#3c6e71] transition-colors"
+                disabled={submitting}
+                className="mt-6 w-full py-4 bg-[#1a1a1a] text-white text-sm font-body font-500 uppercase tracking-wider rounded hover:bg-[#3c6e71] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Complete Purchase
+                {submitting ? 'Processing…' : 'Complete Purchase'}
               </button>
             </form>
           </motion.div>

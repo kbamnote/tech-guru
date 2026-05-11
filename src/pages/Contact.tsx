@@ -16,9 +16,8 @@ export default function Contact() {
   };
 
   const contactInfo = [
-    { icon: Mail, label: 'Email', value: 'hello@imtechguru.in' },
-    { icon: Phone, label: 'Phone', value: '+91 98765 43210' },
-    { icon: MapPin, label: 'Location', value: 'Bangalore, Karnataka, India' },
+    { icon: Mail, label: 'Email', value: 'support@imtechguru.in' },
+    { icon: MapPin, label: 'Location', value: 'Wathoda, Ring Road, Near Swaminarayan Mandir, Nagpur, Maharashtra' },
   ];
 
   return (
