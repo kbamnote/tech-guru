@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, ChevronDown } from 'lucide-react';
+import { Mail, MapPin, Send, ChevronDown } from 'lucide-react';
 import { faqs } from '@/data/products';
 
 export default function Contact() {
