@@ -47,7 +47,7 @@ export const products: Product[] = [
     id: 102,
     title: 'Coloring Books Collection',
     category: 'kids',
-    price: 29,
+    price: 1,
     rating: 4.7,
     reviews: 95,
     image: '/images/ColoringBooks.jpeg',
