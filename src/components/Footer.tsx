@@ -19,6 +19,9 @@ export default function Footer() {
     { label: 'Shop', href: '/shop' },
     { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
+    { label: 'Privacy Policy', href: '/privacy-policy' },
+    { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+    { label: 'Cancellation & Refund Policy', href: '/refund-policy' },
   ];
 
   return (
@@ -84,11 +87,14 @@ export default function Footer() {
             2026 ImTechGuru. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link to="/" className="text-xs font-body text-white/30 hover:text-white/60 transition-colors">
+            <Link to="/privacy-policy" className="text-xs font-body text-white/30 hover:text-white/60 transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/" className="text-xs font-body text-white/30 hover:text-white/60 transition-colors">
-              Terms of Service
+            <Link to="/terms-and-conditions" className="text-xs font-body text-white/30 hover:text-white/60 transition-colors">
+              Terms & Conditions
+            </Link>
+            <Link to="/refund-policy" className="text-xs font-body text-white/30 hover:text-white/60 transition-colors">
+              Refund Policy
             </Link>
           </div>
         </div>
