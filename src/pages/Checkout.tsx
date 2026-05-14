@@ -80,7 +80,7 @@ export default function Checkout() {
         order_id: orderData.order.id,
         handler: async function (response: any) {
           try {
-            // 5. Verify and Save Order on Backend
+            // 5. Save Order on Backend
             await fetch('https://tech-guru-backend-production.up.railway.app/api/orders', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -96,12 +96,41 @@ export default function Checkout() {
                 razorpay_signature: response.razorpay_signature
               }),
             });
+
+            // 6. Automatic Ebook Delivery via Email
+            // Only send for Kids Ebooks (IDs 101-112)
+            for (const item of items) {
+              if (item.id >= 101 && item.id <= 112) {
+                const bookIdMap: Record<number, string> = {
+                  101: 'kids_book_1', 102: 'kids_book_2', 103: 'kids_book_3',
+                  104: 'kids_book_4', 105: 'kids_book_5', 106: 'kids_book_6',
+                  107: 'kids_book_7', 108: 'kids_book_8', 109: 'kids_book_9',
+                  110: 'kids_book_10', 111: 'kids_book_11', 112: 'kids_book_12'
+                };
+                
+                const bookId = bookIdMap[item.id];
+                if (bookId) {
+                  console.log(`Triggering delivery for ${bookId}...`);
+                  await fetch('https://tech-guru-backend-production.up.railway.app/api/payments/verify-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      bookId,
+                      email: form.email,
+                      razorpay_order_id: response.razorpay_order_id,
+                      razorpay_payment_id: response.razorpay_payment_id,
+                      razorpay_signature: response.razorpay_signature
+                    }),
+                  });
+                }
+              }
+            }
             
             clearCart();
             navigate(`/order-confirmation?orderId=${orderId}&email=${encodeURIComponent(form.email)}`);
           } catch (err) {
-            console.error('Error saving final order:', err);
-            alert('Payment verified but failed to save order.');
+            console.error('Error saving order or delivering ebook:', err);
+            alert('Payment received but there was an issue delivering your ebook. Please contact support.');
           } finally {
             setSubmitting(false);
           }
