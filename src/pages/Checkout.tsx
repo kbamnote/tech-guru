@@ -98,39 +98,48 @@ export default function Checkout() {
             });
 
             // 6. Automatic Ebook Delivery via Email
-            // Only send for Kids Ebooks (IDs 101-112)
+            // Send for Kids Ebooks (IDs 101-112) and Self Help EBooks (IDs 201-209)
+            const bookIdMap: Record<number, string> = {
+              // Kids EBooks
+              101: 'kids_book_1',       // Activity Book School Bus
+              102: 'kids_book_2',       // Coloring Books Collection
+              103: 'kids_book_3',       // Kids Cyber Security Guide
+              104: 'kids_book_4',       // Fun with Letters and Numbers
+              112: 'kids_book_5',       // Fun Activity Books Combo
+              109: 'kids_book_6',       // Ramadan Kids Book
+              105: 'kids_book_7',       // Kids Activity Busy Book
+              106: 'kids_book_8',       // Kids Funbook Adventures
+              107: 'kids_book_9',       // Kids Tracing and Coloring
+              108: 'kids_book_10',      // Nursery Activity Books
+              110: 'kids_book_11',      // Ramadan Activity Booklet
+              111: 'kids_book_12',      // Summer Activity Book
+              // Self Help EBooks
+              201: 'self_help_all_parts', // Self Help EBook All Part
+              209: 'self_help_part_1',    // Self Help EBook Part 1
+              202: 'self_help_part_2',    // Self Help EBook Part 2
+              203: 'self_help_part_3',    // Self Help EBook Part 3
+              204: 'self_help_part_4',    // Self Help EBook Part 4
+              205: 'self_help_part_5',    // Self Help EBook Part 5
+              206: 'self_help_part_6',    // Self Help EBook Part 6
+              207: 'self_help_part_7',    // Self Help EBook Part 7
+              208: 'self_help_part_8',    // Self Help EBook Part 8
+            };
+
             for (const item of items) {
-              if (item.id >= 101 && item.id <= 112) {
-                const bookIdMap: Record<number, string> = {
-                  101: 'kids_book_1',  // Activity Book School Bus
-                  102: 'kids_book_2',  // Coloring Books Collection
-                  103: 'kids_book_3',  // Kids Cyber Security Guide
-                  104: 'kids_book_4',  // Fun with Letters and Numbers
-                  112: 'kids_book_5',  // Fun Activity Books Combo
-                  109: 'kids_book_6',  // Ramadan Kids Book
-                  105: 'kids_book_7',  // Kids Activity Busy Book
-                  106: 'kids_book_8',  // Kids Funbook Adventures
-                  107: 'kids_book_9',  // Kids Tracing and Coloring
-                  108: 'kids_book_10', // Nursery Activity Books
-                  110: 'kids_book_11', // Ramadan Activity Booklet
-                  111: 'kids_book_12'  // Summer Activity Book
-                };
-                
-                const bookId = bookIdMap[item.id];
-                if (bookId) {
-                  console.log(`Triggering delivery for ${bookId}...`);
-                  await fetch('https://tech-guru-backend-production.up.railway.app/api/payments/verify-payment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      bookId,
-                      email: form.email,
-                      razorpay_order_id: response.razorpay_order_id,
-                      razorpay_payment_id: response.razorpay_payment_id,
-                      razorpay_signature: response.razorpay_signature
-                    }),
-                  });
-                }
+              const bookId = bookIdMap[item.id];
+              if (bookId) {
+                console.log(`Triggering delivery for ${bookId}...`);
+                await fetch('https://tech-guru-backend-production.up.railway.app/api/payments/verify-payment', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    bookId,
+                    email: form.email,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature
+                  }),
+                });
               }
             }
             
