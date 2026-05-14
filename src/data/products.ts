@@ -124,7 +124,7 @@ export const products: Product[] = [
   },
   {
     id: 109,
-    title: 'Ramdan Kids Book',
+    title: 'Ramadan Kids Book',
     category: 'kids',
     price: 199,
     rating: 4.9,
@@ -136,7 +136,7 @@ export const products: Product[] = [
   },
   {
     id: 110,
-    title: 'Ramzan Activity Booklet',
+    title: 'Ramadan Activity Booklet',
     category: 'kids',
     price: 149,
     rating: 4.8,

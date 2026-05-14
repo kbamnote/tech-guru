@@ -102,10 +102,18 @@ export default function Checkout() {
             for (const item of items) {
               if (item.id >= 101 && item.id <= 112) {
                 const bookIdMap: Record<number, string> = {
-                  101: 'kids_book_1', 102: 'kids_book_2', 103: 'kids_book_3',
-                  104: 'kids_book_4', 105: 'kids_book_5', 106: 'kids_book_6',
-                  107: 'kids_book_7', 108: 'kids_book_8', 109: 'kids_book_9',
-                  110: 'kids_book_10', 111: 'kids_book_11', 112: 'kids_book_12'
+                  101: 'kids_book_1',  // Activity Book School Bus
+                  102: 'kids_book_2',  // Coloring Books Collection
+                  103: 'kids_book_3',  // Kids Cyber Security Guide
+                  104: 'kids_book_4',  // Fun with Letters and Numbers
+                  112: 'kids_book_5',  // Fun Activity Books Combo
+                  109: 'kids_book_6',  // Ramadan Kids Book
+                  105: 'kids_book_7',  // Kids Activity Busy Book
+                  106: 'kids_book_8',  // Kids Funbook Adventures
+                  107: 'kids_book_9',  // Kids Tracing and Coloring
+                  108: 'kids_book_10', // Nursery Activity Books
+                  110: 'kids_book_11', // Ramadan Activity Booklet
+                  111: 'kids_book_12'  // Summer Activity Book
                 };
                 
                 const bookId = bookIdMap[item.id];
