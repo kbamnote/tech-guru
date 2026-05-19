@@ -75,8 +75,11 @@ export default function CartDrawer() {
                         <h3 className="text-sm font-body font-500 text-[#1a1a1a] truncate">
                           {item.title}
                         </h3>
-                        <p className="text-sm text-[#6b6b6b] font-body mt-0.5">
-                          Rs. {item.price}
+                        <p className="text-sm font-body mt-0.5">
+                          <span className="text-[#6b6b6b]">Rs. {item.price}</span>
+                          {item.originalPrice && (
+                            <span className="text-[#a0a0a0] line-through ml-2 text-xs">Rs. {item.originalPrice}</span>
+                          )}
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <button

@@ -42,8 +42,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             <span className="text-xs text-[#e6e6e6]">|</span>
             <span className="text-xs font-body text-[#6b6b6b]">({product.reviews})</span>
           </div>
-          <p className="text-sm font-body text-[#6b6b6b] mt-1">
-            Rs. {product.price.toLocaleString('en-IN')}
+          <p className="text-sm font-body mt-1">
+            <span className="text-[#1a1a1a] font-500">Rs. {product.price.toLocaleString('en-IN')}</span>
+            {product.originalPrice && (
+              <span className="text-[#6b6b6b] line-through ml-2 text-xs">Rs. {product.originalPrice.toLocaleString('en-IN')}</span>
+            )}
           </p>
         </div>
       </Link>

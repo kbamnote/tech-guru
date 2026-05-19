@@ -109,8 +109,11 @@ export default function ProductDetail() {
               <span className="text-sm font-body text-[#6b6b6b]">{product.reviews} reviews</span>
             </div>
 
-            <p className="font-heading text-2xl text-[#1a1a1a] mt-6">
+            <p className="font-heading text-2xl text-[#1a1a1a] mt-6 flex items-center gap-3">
               Rs. {product.price.toLocaleString('en-IN')}
+              {product.originalPrice && (
+                <span className="text-lg text-[#6b6b6b] line-through font-body">Rs. {product.originalPrice.toLocaleString('en-IN')}</span>
+              )}
             </p>
 
             <p className="text-sm font-body text-[#6b6b6b] leading-relaxed mt-4">
@@ -277,8 +280,11 @@ export default function ProductDetail() {
                     <h3 className="mt-3 text-sm font-body font-500 text-[#1a1a1a] group-hover:text-[#3c6e71] transition-colors">
                       {p.title}
                     </h3>
-                    <p className="mt-1 text-sm font-body text-[#6b6b6b]">
-                      Rs. {p.price.toLocaleString('en-IN')}
+                    <p className="mt-1 text-sm font-body">
+                      <span className="text-[#1a1a1a] font-500">Rs. {p.price.toLocaleString('en-IN')}</span>
+                      {p.originalPrice && (
+                        <span className="text-[#6b6b6b] line-through ml-2 text-xs">Rs. {p.originalPrice.toLocaleString('en-IN')}</span>
+                      )}
                     </p>
                   </Link>
                 </motion.div>

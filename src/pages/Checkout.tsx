@@ -329,9 +329,16 @@ export default function Checkout() {
                       <p className="text-sm font-body font-500 text-[#1a1a1a] truncate">{item.title}</p>
                       <p className="text-xs font-body text-[#6b6b6b]">Qty: {item.quantity}</p>
                     </div>
-                    <p className="text-sm font-body text-[#1a1a1a]">
-                      Rs. {(item.price * item.quantity).toLocaleString('en-IN')}
-                    </p>
+                    <div className="text-right">
+                      <p className="text-sm font-body text-[#1a1a1a]">
+                        Rs. {(item.price * item.quantity).toLocaleString('en-IN')}
+                      </p>
+                      {item.originalPrice && (
+                        <p className="text-xs font-body text-[#a0a0a0] line-through mt-0.5">
+                          Rs. {(item.originalPrice * item.quantity).toLocaleString('en-IN')}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
