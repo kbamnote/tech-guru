@@ -15,6 +15,7 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'description' | 'features' | 'reviews'>('description');
   const [added, setAdded] = useState(false);
+  const [related, setRelated] = useState<Product[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -24,6 +25,15 @@ export default function ProductDetail() {
       .catch(() => setProduct(null))
       .finally(() => setLoading(false));
   }, [id]);
+
+  // Related products (same category). Must stay above the early returns below —
+  // hooks have to run in the same order on every render.
+  useEffect(() => {
+    if (!product) return;
+    fetchProducts().then(all => {
+      setRelated(all.filter(p => p.category === product.category && p._id !== product._id).slice(0, 3));
+    });
+  }, [product]);
 
   // Static reviews filtered by productId — just for demo display
   const productReviews = reviews.filter(r => r.productId === 1);
@@ -58,14 +68,6 @@ export default function ProductDetail() {
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
-
-  // Fetch related products (same category)
-  const [related, setRelated] = useState<Product[]>([]);
-  useEffect(() => {
-    fetchProducts().then(all => {
-      setRelated(all.filter(p => p.category === product.category && p._id !== product._id).slice(0, 3));
-    });
-  }, [product]);
 
   return (
     <main className="min-h-screen bg-[#f4f4f4] pt-24 pb-20">
