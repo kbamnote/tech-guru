@@ -16,6 +16,8 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState<'description' | 'features' | 'reviews'>('description');
   const [added, setAdded] = useState(false);
   const [related, setRelated] = useState<Product[]>([]);
+  const [activeImage, setActiveImage] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -35,8 +37,30 @@ export default function ProductDetail() {
     });
   }, [product]);
 
+  // A new product means a new gallery — go back to the first image.
+  useEffect(() => {
+    setActiveImage(0);
+    setLightbox(false);
+  }, [id]);
+
+  // Escape closes the full-view overlay; lock body scroll while it's open.
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightbox(false); };
+    window.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [lightbox]);
+
   // Static reviews filtered by productId — just for demo display
   const productReviews = reviews.filter(r => r.productId === 1);
+
+  // Falls back to the single `image` for products created before galleries existed.
+  const gallery = (product?.images?.length ? product.images : [product?.image]).filter(Boolean) as string[];
 
   if (loading) {
     return (
@@ -81,18 +105,58 @@ export default function ProductDetail() {
         </Link>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
-          {/* Product Image */}
+          {/* Product gallery — thumbnail rail + main image */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="aspect-[3/4] bg-white overflow-hidden rounded">
-              <img
-                src={product.image}
-                alt={product.title}
-                className="w-full h-full object-cover"
-              />
+            <div className="flex flex-col-reverse md:flex-row gap-3 md:gap-4">
+              {/* Thumbnails: horizontal strip on mobile, vertical rail on desktop */}
+              {gallery.length > 1 && (
+                <div className="flex md:flex-col gap-2.5 overflow-x-auto md:overflow-x-visible md:overflow-y-auto md:max-h-[520px] pb-1 md:pb-0 md:pr-1">
+                  {gallery.map((src, i) => (
+                    <button
+                      key={`${src}-${i}`}
+                      type="button"
+                      onMouseEnter={() => setActiveImage(i)}
+                      onClick={() => setActiveImage(i)}
+                      aria-label={`View image ${i + 1} of ${gallery.length}`}
+                      aria-current={activeImage === i}
+                      className={`relative flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white border transition-all duration-200 ${
+                        activeImage === i
+                          ? 'border-[#3c6e71] ring-2 ring-[#3c6e71]/30'
+                          : 'border-[#e6e6e6] hover:border-[#b0b0b0]'
+                      }`}
+                    >
+                      <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Main image */}
+              <div className="flex-1 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setLightbox(true)}
+                  className="block w-full aspect-[3/4] bg-white overflow-hidden rounded cursor-zoom-in"
+                >
+                  <img
+                    key={gallery[activeImage]}
+                    src={gallery[activeImage]}
+                    alt={product.title}
+                    className="w-full h-full object-cover animate-[gallery-fade_0.25s_ease-out]"
+                  />
+                </button>
+                {gallery.length > 0 && (
+                  <p className="text-center text-sm font-body text-[#3c6e71] mt-3">
+                    <button type="button" onClick={() => setLightbox(true)} className="hover:underline">
+                      Click to see full view
+                    </button>
+                  </p>
+                )}
+              </div>
             </div>
           </motion.div>
 
@@ -303,6 +367,54 @@ export default function ProductDetail() {
           </div>
         )}
       </div>
+
+      {/* Full-view overlay */}
+      {lightbox && gallery.length > 0 && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
+          onClick={() => setLightbox(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${product.title} — full view`}
+        >
+          <button
+            type="button"
+            onClick={() => setLightbox(false)}
+            aria-label="Close full view"
+            className="absolute top-5 right-5 text-white/70 hover:text-white text-3xl leading-none"
+          >
+            ×
+          </button>
+
+          <img
+            src={gallery[activeImage]}
+            alt={product.title}
+            onClick={e => e.stopPropagation()}
+            className="max-w-full max-h-[85vh] object-contain cursor-default"
+          />
+
+          {gallery.length > 1 && (
+            <div
+              className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2"
+              onClick={e => e.stopPropagation()}
+            >
+              {gallery.map((src, i) => (
+                <button
+                  key={`${src}-${i}`}
+                  type="button"
+                  onClick={() => setActiveImage(i)}
+                  aria-label={`View image ${i + 1}`}
+                  className={`w-12 h-12 rounded overflow-hidden border transition-all ${
+                    activeImage === i ? 'border-white' : 'border-white/30 opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <img src={src} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </main>
   );
 }

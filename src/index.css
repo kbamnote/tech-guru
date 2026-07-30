@@ -91,6 +91,12 @@
   to { transform: translateX(-50%); }
 }
 
+/* Cross-fade when switching product gallery images */
+@keyframes gallery-fade {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
+
 .animate-bounce-chevron {
   animation: bounce-chevron 2s ease-in-out infinite;
 }
