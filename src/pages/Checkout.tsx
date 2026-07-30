@@ -52,7 +52,7 @@ export default function Checkout() {
       }
 
       // 2. Create Order on Backend
-      const orderResponse = await fetch('https://tech-guru-backend-production.up.railway.app/api/orders/create-razorpay-order', {
+      const orderResponse = await fetch('https://tech-guru-backend-production-a5ce.up.railway.app/api/orders/create-razorpay-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalPrice }),
@@ -67,7 +67,7 @@ export default function Checkout() {
       }
 
       // 3. Fetch Razorpay key ID
-      const keyResponse = await fetch('https://tech-guru-backend-production.up.railway.app/api/orders/razorpay-key');
+      const keyResponse = await fetch('https://tech-guru-backend-production-a5ce.up.railway.app/api/orders/razorpay-key');
       const keyData = await keyResponse.json();
 
       // 4. Initialize Razorpay Checkout
@@ -81,7 +81,7 @@ export default function Checkout() {
         handler: async function (response: any) {
           try {
             // 5. Save Order on Backend
-            await fetch('https://tech-guru-backend-production.up.railway.app/api/orders', {
+            await fetch('https://tech-guru-backend-production-a5ce.up.railway.app/api/orders', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -129,7 +129,7 @@ export default function Checkout() {
               const bookId = bookIdMap[item.id];
               if (bookId) {
                 console.log(`Triggering delivery for ${bookId}...`);
-                await fetch('https://tech-guru-backend-production.up.railway.app/api/payments/verify-payment', {
+                await fetch('https://tech-guru-backend-production-a5ce.up.railway.app/api/payments/verify-payment', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
