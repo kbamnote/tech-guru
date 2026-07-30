@@ -4,6 +4,8 @@ import { ArrowLeft, CreditCard, Wallet, Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 
+const API = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
+
 function loadScript(src: string) {
   return new Promise((resolve) => {
     const script = document.createElement('script');
@@ -52,7 +54,7 @@ export default function Checkout() {
       }
 
       // 2. Create Order on Backend
-      const orderResponse = await fetch('https://tech-guru-backend-production-a5ce.up.railway.app/api/orders/create-razorpay-order', {
+      const orderResponse = await fetch(`${API}/api/orders/create-razorpay-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalPrice }),
@@ -67,7 +69,7 @@ export default function Checkout() {
       }
 
       // 3. Fetch Razorpay key ID
-      const keyResponse = await fetch('https://tech-guru-backend-production-a5ce.up.railway.app/api/orders/razorpay-key');
+      const keyResponse = await fetch(`${API}/api/orders/razorpay-key`);
       const keyData = await keyResponse.json();
 
       // 4. Initialize Razorpay Checkout
@@ -81,7 +83,7 @@ export default function Checkout() {
         handler: async function (response: any) {
           try {
             // 5. Save Order on Backend
-            await fetch('https://tech-guru-backend-production-a5ce.up.railway.app/api/orders', {
+            await fetch(`${API}/api/orders`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -98,51 +100,31 @@ export default function Checkout() {
             });
 
             // 6. Automatic Ebook Delivery via Email
-            // Send for Kids Ebooks (IDs 101-112) and Self Help EBooks (IDs 201-209)
-            const bookIdMap: Record<number, string> = {
-              // Kids EBooks
-              101: 'kids_book_1',       // Activity Book School Bus
-              102: 'kids_book_2',       // Coloring Books Collection
-              103: 'kids_book_3',       // Kids Cyber Security Guide
-              104: 'kids_book_4',       // Fun with Letters and Numbers
-              112: 'kids_book_5',       // Fun Activity Books Combo
-              109: 'kids_book_6',       // Ramadan Kids Book
-              105: 'kids_book_7',       // Kids Activity Busy Book
-              106: 'kids_book_8',       // Kids Funbook Adventures
-              107: 'kids_book_9',       // Kids Tracing and Coloring
-              108: 'kids_book_10',      // Nursery Activity Books
-              110: 'kids_book_11',      // Ramadan Activity Booklet
-              111: 'kids_book_12',      // Summer Activity Book
-              // Self Help EBooks
-              201: 'self_help_all_parts', // Self Help EBook All Part
-              209: 'self_help_part_1',    // Self Help EBook Part 1
-              202: 'self_help_part_2',    // Self Help EBook Part 2
-              203: 'self_help_part_3',    // Self Help EBook Part 3
-              204: 'self_help_part_4',    // Self Help EBook Part 4
-              205: 'self_help_part_5',    // Self Help EBook Part 5
-              206: 'self_help_part_6',    // Self Help EBook Part 6
-              207: 'self_help_part_7',    // Self Help EBook Part 7
-              208: 'self_help_part_8',    // Self Help EBook Part 8
-            };
-
+            // Each product now stores its own driveLink from the database.
+            // We send a delivery request for every cart item that has a driveLink.
             for (const item of items) {
-              const bookId = bookIdMap[item.id];
-              if (bookId) {
-                console.log(`Triggering delivery for ${bookId}...`);
-                await fetch('https://tech-guru-backend-production-a5ce.up.railway.app/api/payments/verify-payment', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    bookId,
-                    email: form.email,
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature
-                  }),
-                });
+              if (!item.driveLink) {
+                console.log(`No driveLink for ${item.title}, skipping delivery.`);
+                continue;
               }
+              console.log(`Triggering delivery for ${item.title}...`);
+              // Use a unique delivery ID based on the product _id
+              const deliveryId = `product_${item._id}`;
+              await fetch(`${API}/api/payments/verify-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  bookId: deliveryId,
+                  driveLink: item.driveLink,
+                  bookName: item.title,
+                  email: form.email,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                }),
+              });
             }
-            
+
             clearCart();
             navigate(`/order-confirmation?orderId=${orderId}&email=${encodeURIComponent(form.email)}`);
           } catch (err) {
@@ -321,7 +303,7 @@ export default function Checkout() {
               <h2 className="font-heading text-lg text-[#1a1a1a] mb-6">Order Summary</h2>
               <div className="space-y-4 mb-6">
                 {items.map(item => (
-                  <div key={item.id} className="flex gap-3">
+                  <div key={item._id} className="flex gap-3">
                     <div className="w-14 h-16 flex-shrink-0 bg-[#f4f4f4] rounded overflow-hidden">
                       <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                     </div>

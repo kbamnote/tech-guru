@@ -16,7 +16,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.6, delay: index * 0.1, ease: 'easeOut' }}
     >
-      <Link to={`/product/${product.id}`} className="group block">
+      <Link to={`/product/${product._id}`} className="group block">
         <div className="aspect-[3/4] overflow-hidden bg-[#f4f4f4] relative">
           <img
             src={product.image}

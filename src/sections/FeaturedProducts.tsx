@@ -1,9 +1,25 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
-import { products } from '@/data/products';
+import { fetchProducts } from '@/data/api';
+import type { Product } from '@/data/products';
 
 export default function FeaturedProducts() {
-  const featured = products.slice(0, 4);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProducts()
+      .then(all => setProducts(all.slice(0, 4)))
+      .catch(() => setProducts([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return null; // don't show empty state on home
+
+  const featured = products.length > 0 ? products.slice(0, 4) : [];
+  if (featured.length === 0) return null;
+
   // Duplicate for seamless infinite loop
   const items = [...featured, ...featured];
 
@@ -41,21 +57,13 @@ export default function FeaturedProducts() {
 
         {/* Carousel viewport — clips overflow */}
         <div className="overflow-hidden">
-          <div
-            className="carousel-track flex gap-4 md:gap-6"
-          /* 
-            Each card = 1/4 of the original grid width.
-            We duplicate the list so the second half seamlessly
-            replaces the first when translateX(-50%) is reached.
-          */
-          >
+          <div className="carousel-track flex gap-4 md:gap-6">
             {items.map((product, i) => (
               <div
-                key={`${product.id}-${i}`}
-                /* Match the original grid: 2-col on mobile, 4-col on md */
+                key={`${product._id}-${i}`}
                 className="shrink-0 w-[calc(50%-8px)] md:w-[calc(25%-18px)]"
               >
-                <Link to={`/product/${product.id}`} className="group block">
+                <Link to={`/product/${product._id}`} className="group block">
                   <div className="aspect-square overflow-hidden bg-[#f4f4f4]">
                     <img
                       src={product.image}

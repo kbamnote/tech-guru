@@ -1,30 +1,42 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
-import { useState, useMemo } from 'react';
 import { ArrowLeft, Star, Minus, Plus, ShoppingCart } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { products, reviews } from '@/data/products';
+import { fetchProduct, fetchProducts } from '@/data/api';
+import { reviews } from '@/data/products';
+import type { Product } from '@/data/products';
 import { useCart } from '@/context/CartContext';
 
 export default function ProductDetail() {
-  const params = useParams<{ id: string }>();
-  const productId = parseInt(params.id || '0');
+  const { id } = useParams<{ id: string }>();
   const { addToCart } = useCart();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'description' | 'features' | 'reviews'>('description');
   const [added, setAdded] = useState(false);
 
-  const product = useMemo(() => {
-    return products.find(p => p.id === productId);
-  }, [productId]);
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    fetchProduct(id)
+      .then(setProduct)
+      .catch(() => setProduct(null))
+      .finally(() => setLoading(false));
+  }, [id]);
 
-  const productReviews = useMemo(() => {
-    return reviews.filter(r => r.productId === productId);
-  }, [productId]);
+  // Static reviews filtered by productId — just for demo display
+  const productReviews = reviews.filter(r => r.productId === 1);
 
-  const related = useMemo(() => {
-    if (!product) return [];
-    return products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 3);
-  }, [product]);
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#f4f4f4] pt-24 pb-20">
+        <div className="max-w-[1200px] mx-auto px-6 text-center py-20">
+          <h1 className="font-heading text-3xl text-[#1a1a1a]">Loading…</h1>
+        </div>
+      </main>
+    );
+  }
 
   if (!product) {
     return (
@@ -47,17 +59,13 @@ export default function ProductDetail() {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const categoryColors: Record<string, string> = {
-    kids: 'bg-amber-100 text-amber-700',
-    edu: 'bg-teal-100 text-teal-700',
-    content: 'bg-violet-100 text-violet-700',
-  };
-
-  const categoryNames: Record<string, string> = {
-    kids: 'Kids eBook',
-    edu: 'Educational',
-    content: 'Content Bundle',
-  };
+  // Fetch related products (same category)
+  const [related, setRelated] = useState<Product[]>([]);
+  useEffect(() => {
+    fetchProducts().then(all => {
+      setRelated(all.filter(p => p.category === product.category && p._id !== product._id).slice(0, 3));
+    });
+  }, [product]);
 
   return (
     <main className="min-h-screen bg-[#f4f4f4] pt-24 pb-20">
@@ -92,8 +100,8 @@ export default function ProductDetail() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
           >
-            <span className={`inline-block text-[10px] font-body font-500 uppercase tracking-wider px-2.5 py-1 rounded ${categoryColors[product.category]}`}>
-              {categoryNames[product.category]}
+            <span className="inline-block text-[10px] font-body font-500 uppercase tracking-wider px-2.5 py-1 rounded bg-[#f4f4f4] text-[#6b6b6b]">
+              {product.category}
             </span>
 
             <h1 className="font-heading text-3xl md:text-4xl font-300 text-[#1a1a1a] mt-4">
@@ -189,7 +197,7 @@ export default function ProductDetail() {
                 transition={{ duration: 0.3 }}
               >
                 <p className="text-[15px] font-body text-[#6b6b6b] leading-relaxed max-w-2xl">
-                  {product.description} This premium digital product is designed to provide exceptional value and a seamless learning experience. All our products are created by industry experts and undergo rigorous quality checks before reaching you.
+                  {product.description}
                 </p>
               </motion.div>
             )}
@@ -262,13 +270,13 @@ export default function ProductDetail() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
               {related.map((p, i) => (
                 <motion.div
-                  key={p.id}
+                  key={p._id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                 >
-                  <Link to={`/product/${p.id}`} className="group block">
+                  <Link to={`/product/${p._id}`} className="group block">
                     <div className="aspect-[3/4] overflow-hidden bg-[#f4f4f4]">
                       <img
                         src={p.image}

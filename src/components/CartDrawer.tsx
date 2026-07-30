@@ -56,7 +56,7 @@ export default function CartDrawer() {
                 <div className="flex flex-col gap-4">
                   {items.map(item => (
                     <motion.div
-                      key={item.id}
+                      key={item._id}
                       layout
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -83,7 +83,7 @@ export default function CartDrawer() {
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <button
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            onClick={() => updateQuantity(item._id, item.quantity - 1)}
                             className="w-7 h-7 flex items-center justify-center border border-[#e6e6e6] rounded hover:border-[#1a1a1a] transition-colors"
                           >
                             <Minus size={12} />
@@ -92,7 +92,7 @@ export default function CartDrawer() {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item._id, item.quantity + 1)}
                             className="w-7 h-7 flex items-center justify-center border border-[#e6e6e6] rounded hover:border-[#1a1a1a] transition-colors"
                           >
                             <Plus size={12} />
@@ -100,7 +100,7 @@ export default function CartDrawer() {
                         </div>
                       </div>
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item._id)}
                         className="p-1 text-[#6b6b6b] hover:text-red-500 transition-colors self-start"
                         aria-label="Remove item"
                       >

@@ -1,13 +1,28 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { SlidersHorizontal, X } from 'lucide-react';
-import { products, categories } from '@/data/products';
+import { fetchProducts, fetchCategories } from '@/data/api';
+import type { Product, Category } from '@/data/products';
 import ProductCard from '@/components/ProductCard';
 
 export default function Shop() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('featured');
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    Promise.all([
+      fetchProducts().catch(() => [] as Product[]),
+      fetchCategories().catch(() => [] as Category[]),
+    ]).then(([prods, cats]) => {
+      setProducts(prods);
+      setCategories(cats);
+      setLoading(false);
+    });
+  }, []);
 
   const filtered = useMemo(() => {
     let result = [...products];
@@ -34,11 +49,11 @@ export default function Shop() {
     }
 
     return result;
-  }, [activeCategory, sortBy]);
+  }, [products, activeCategory, sortBy]);
 
   const allCategories = [
     { id: 'all', name: 'All Products' },
-    ...categories.map(c => ({ id: c.id, name: c.name })),
+    ...categories.map(c => ({ id: c.slug, name: c.name })),
   ];
 
   return (
@@ -54,7 +69,7 @@ export default function Shop() {
             Shop
           </h1>
           <p className="mt-2 text-sm font-body text-[#6b6b6b]">
-            {filtered.length} products available
+            {loading ? 'Loading…' : `${filtered.length} products available`}
           </p>
         </motion.div>
 
@@ -121,7 +136,11 @@ export default function Shop() {
 
           {/* Product Grid */}
           <div className="flex-1">
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="text-center py-20">
+                <p className="font-heading text-xl text-[#1a1a1a]">Loading…</p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="text-center py-20">
                 <p className="font-heading text-xl text-[#1a1a1a]">No products found</p>
                 <p className="text-sm text-[#6b6b6b] mt-2">Try adjusting your filters</p>
@@ -129,7 +148,7 @@ export default function Shop() {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                 {filtered.map((product, i) => (
-                  <ProductCard key={product.id} product={product} index={i} />
+                  <ProductCard key={product._id} product={product} index={i} />
                 ))}
               </div>
             )}

@@ -1,9 +1,10 @@
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
-import { categories } from '@/data/products';
+import { fetchCategories } from '@/data/api';
+import type { Category } from '@/data/products';
 
-function CategoryCard({ cat, i }: { cat: typeof categories[0]; i: number }) {
+function CategoryCard({ cat, i }: { cat: Category; i: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -57,12 +58,16 @@ function CategoryCard({ cat, i }: { cat: typeof categories[0]; i: number }) {
           className="group block relative overflow-hidden rounded-xl shadow-sm hover:shadow-xl transition-shadow duration-500"
         >
           <div className="aspect-[3/4] overflow-hidden relative">
-            <img
-              src={cat.image}
-              alt={cat.name}
-              className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
-              loading="lazy"
-            />
+            {cat.image ? (
+              <img
+                src={cat.image}
+                alt={cat.name}
+                className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-[#3c6e71]/20 to-[#1a1a1a]/40" />
+            )}
 
             {/* Base gradient overlay */}
             <div
@@ -106,6 +111,18 @@ function CategoryCard({ cat, i }: { cat: typeof categories[0]; i: number }) {
 }
 
 export default function Categories() {
+  const [cats, setCats] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCategories()
+      .then(setCats)
+      .catch(() => setCats([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return null;
+
   return (
     <section className="relative z-10 bg-[#f4f4f4] pt-32 pb-20">
       <div className="max-w-[1200px] mx-auto px-6">
@@ -124,11 +141,15 @@ export default function Categories() {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {categories.map((cat, i) => (
-            <CategoryCard key={cat.id} cat={cat} i={i} />
-          ))}
-        </div>
+        {cats.length === 0 ? (
+          <p className="text-center text-sm text-[#6b6b6b]">Categories coming soon.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {cats.map((cat, i) => (
+              <CategoryCard key={cat._id} cat={cat} i={i} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,7 +1,8 @@
+// ── Types matching the API (MongoDB) ──────────────────────────────
 export interface Product {
-  id: number;
+  _id: string;
   title: string;
-  category: 'kids' | 'edu' | 'content';
+  category: string;
   price: number;
   originalPrice?: number;
   rating: number;
@@ -10,12 +11,27 @@ export interface Product {
   badge?: string;
   description: string;
   features: string[];
+  driveLink?: string;
+  active: boolean;
+  sortOrder: number;
+  createdAt?: string;
 }
 
 export interface CartItem extends Product {
   quantity: number;
 }
 
+export interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  image?: string;
+  sortOrder: number;
+  count: number;
+}
+
+// ── Static demo data (not from API) ──────────────────────────────
 export interface Review {
   id: number;
   productId: number;
@@ -25,312 +41,18 @@ export interface Review {
   comment: string;
 }
 
-export const categories = [
-  { id: 'kids', name: 'Kids eBooks', slug: 'kids', count: 12, image: '/images/kids-ebooks.png', description: 'Fun, interactive learning for little minds' },
-  { id: 'edu', name: 'Educational Books', slug: 'educational', count: 18, image: '/images/edu-books.png', description: 'Curriculum-aligned guides for every grade' },
-  { id: 'content', name: 'Content Bundles', slug: 'bundles', count: 9, image: '/images/content-bundles.png', description: 'Everything creators need to grow fast' },
-];
+export interface Testimonial {
+  id: number;
+  name: string;
+  role: string;
+  text: string;
+}
 
-export const products: Product[] = [
-  {
-    id: 101,
-    title: 'Activity Book School Bus',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.8,
-    reviews: 120,
-    image: '/images/ActivityBookSchoolBus.jpeg',
-    badge: 'Bestseller',
-    description: 'A fun-filled activity book featuring school buses, puzzles, and interactive learning for preschoolers.',
-    features: ['Bus-themed puzzles', 'Coloring pages', 'Ages 3-6'],
-  },
-  {
-    id: 102,
-    title: 'Coloring Books Collection',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.7,
-    reviews: 95,
-    image: '/images/ColoringBooks.jpeg',
-    description: 'Beautiful coloring pages designed to boost creativity and motor skills in young children.',
-    features: ['50+ coloring pages', 'Large illustrations', 'Ages 2-5'],
-  },
-  {
-    id: 103,
-    title: 'Kids Cyber Security Guide',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.9,
-    reviews: 210,
-    image: '/images/CyberSecurity.jpeg',
-    badge: 'Educational',
-    description: 'A child-friendly introduction to staying safe online, understanding passwords, and digital citizenship.',
-    features: ['Internet safety tips', 'Interactive quizzes', 'Ages 8-12'],
-  },
-  {
-    id: 104,
-    title: 'Fun with Letters and Numbers',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.6,
-    reviews: 80,
-    image: '/images/FunLettersNumbers.jpeg',
-    description: 'Engaging tracing and writing exercises to help toddlers master the alphabet and basic numbers.',
-    features: ['Alphabet tracing', 'Number counting 1-20', 'Ages 3-5'],
-  },
-  {
-    id: 105,
-    title: 'Kids Activity Busy Book',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.9,
-    reviews: 320,
-    image: '/images/KidsActivityBusyBook.jpeg',
-    badge: 'Bestseller',
-    description: 'The ultimate busy book loaded with matching games, puzzles, and sensory activities to keep kids entertained for hours.',
-    features: ['Matching games', 'Velcro activities', 'Ages 2-6'],
-  },
-  {
-    id: 106,
-    title: 'Kids Funbook Adventures',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.5,
-    reviews: 65,
-    image: '/images/KidsFunbook.jpeg',
-    description: 'A wonderful collection of stories and mini-games that take children on exciting adventures.',
-    features: ['Short stories', 'Mini games', 'Ages 4-8'],
-  },
-  {
-    id: 107,
-    title: 'Kids Tracing and Coloring',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.8,
-    reviews: 140,
-    image: '/images/KidsTracingAndColoring.jpeg',
-    description: 'A perfect blend of tracing exercises and coloring fun to develop fine motor control.',
-    features: ['Line tracing', 'Shape coloring', 'Ages 3-5'],
-  },
-  {
-    id: 108,
-    title: 'Nursery Activity Books',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.7,
-    reviews: 110,
-    image: '/images/NurseryActivityBooks.jpeg',
-    description: 'Comprehensive activity books designed specifically for nursery students to build foundational skills.',
-    features: ['Pre-writing skills', 'Basic shapes', 'Ages 2-4'],
-  },
-  {
-    id: 109,
-    title: 'Ramadan Kids Book',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.9,
-    reviews: 200,
-    image: '/images/RamdanKidsBook.jpeg',
-    badge: 'Popular',
-    description: 'A special book celebrating Ramadan with children through beautiful stories, crafts, and daily activities.',
-    features: ['30 days of activities', 'Ramadan stories', 'Ages 4-10'],
-  },
-  {
-    id: 110,
-    title: 'Ramadan Activity Booklet',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.8,
-    reviews: 150,
-    image: '/images/RamzanActivityBooklet.jpeg',
-    description: 'A handy booklet full of puzzles, coloring pages, and lessons centered around the holy month of Ramzan.',
-    features: ['Islamic puzzles', 'Coloring pages', 'Ages 5-10'],
-  },
-  {
-    id: 111,
-    title: 'Summer Activity Book',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.6,
-    reviews: 90,
-    image: '/images/SummerActivityBook.jpeg',
-    badge: 'Seasonal',
-    description: 'Keep the summer slide away with this massive collection of summer-themed activities, reading logs, and crafts.',
-    features: ['Summer reading log', 'Outdoor activity ideas', 'Ages 5-9'],
-  },
-  {
-    id: 112,
-    title: 'Fun Activity Books Combo',
-    category: 'kids',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.9,
-    reviews: 280,
-    image: '/images/funActivityBooks.jpeg',
-    badge: 'Value Pack',
-    description: 'A mega bundle of our best activity books, ensuring endless fun and learning for your little ones.',
-    features: ['3 books in 1', 'Over 150 pages', 'Ages 3-8'],
-  },
-  {
-    id: 201,
-    title: 'Self Help EBook All Part',
-    category: 'edu',
-    price: 499,
-    originalPrice: 999,
-    rating: 4.9,
-    reviews: 312,
-    image: '/images/Self Help EBook All Part.jpeg',
-    badge: 'Complete Bundle',
-    description: 'The complete Self Help EBook collection — all parts in one powerful bundle. Unlock every lesson, strategy, and insight for total personal transformation.',
-    features: ['All parts included', 'Comprehensive self-help guide', 'Instant digital download'],
-  },
-  {
-    id: 209,
-    title: 'Self Help EBook Part 1',
-    category: 'edu',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.8,
-    reviews: 189,
-    image: '/images/WhatsApp Image 2026-05-14 at 3.44.28 PM.jpeg',
-    badge: 'Start Here',
-    description: 'The first step to your transformation journey. Part 1 lays the foundation with core self-help principles, clarity exercises, and motivational insights.',
-    features: ['Foundation principles', 'Clarity & motivation exercises', 'Instant digital download'],
-  },
-  {
-    id: 202,
-    title: 'Self Help EBook Part 2',
-    category: 'edu',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.7,
-    reviews: 145,
-    image: '/images/Self Help EBook Part 2.jpeg',
-    description: 'Part 2 of the acclaimed Self Help EBook series. Dive deeper into mindset shifts, productivity hacks, and actionable self-improvement strategies.',
-    features: ['Mindset & productivity', 'Actionable exercises', 'Instant digital download'],
-  },
-  {
-    id: 203,
-    title: 'Self Help EBook Part 3',
-    category: 'edu',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.7,
-    reviews: 132,
-    image: '/images/Self Help EBook Part 3.jpeg',
-    description: 'Part 3 continues the journey with advanced techniques for goal-setting, time management, and building lasting habits for success.',
-    features: ['Goal-setting frameworks', 'Time management tools', 'Instant digital download'],
-  },
-  {
-    id: 204,
-    title: 'Self Help EBook Part 4',
-    category: 'edu',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.8,
-    reviews: 118,
-    image: '/images/Self Help EBook Part 4.jpeg',
-    description: 'Part 4 focuses on emotional intelligence, resilience building, and mastering communication skills for personal and professional growth.',
-    features: ['Emotional intelligence guide', 'Resilience strategies', 'Instant digital download'],
-  },
-  {
-    id: 205,
-    title: 'Self Help EBook Part 5',
-    category: 'edu',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.6,
-    reviews: 97,
-    image: '/images/Self Help EBook Part 5.jpeg',
-    description: 'Part 5 explores financial wellness, wealth mindset, and practical money management techniques to secure your future.',
-    features: ['Financial wellness tips', 'Wealth mindset training', 'Instant digital download'],
-  },
-  {
-    id: 206,
-    title: 'Self Help EBook Part 6',
-    category: 'edu',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.7,
-    reviews: 88,
-    image: '/images/Self Help EBook Part 6.jpeg',
-    description: 'Part 6 delves into health, wellness, and the mind-body connection — helping you build a balanced and energized lifestyle.',
-    features: ['Health & wellness guide', 'Mind-body connection', 'Instant digital download'],
-  },
-  {
-    id: 207,
-    title: 'Self Help EBook Part 7',
-    category: 'edu',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.8,
-    reviews: 76,
-    image: '/images/Self Help EBook Part 7.jpeg',
-    description: 'Part 7 covers leadership skills, influence, and building meaningful relationships both personally and professionally.',
-    features: ['Leadership & influence', 'Relationship building', 'Instant digital download'],
-  },
-  {
-    id: 208,
-    title: 'Self Help EBook Part 8',
-    category: 'edu',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.9,
-    reviews: 64,
-    image: '/images/Self Help EBook Part 8.jpeg',
-    badge: 'New',
-    description: 'The final chapter of the series — Part 8 brings together all the teachings into a unified roadmap for living your best life.',
-    features: ['Unified success roadmap', 'Lifetime application guide', 'Instant digital download'],
-  },
-  {
-    id: 7,
-    title: 'YouTube Growth Bundle',
-    category: 'content',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.9,
-    reviews: 342,
-    image: '/images/product-bundle-1.jpg',
-    badge: 'Top Rated',
-    description: 'The ultimate toolkit for YouTube creators. Includes thumbnail templates, video scripts, SEO guides, analytics dashboards, and monetization strategies.',
-    features: ['50+ thumbnail templates (PSD/Canva)', '30 video script templates', 'YouTube SEO optimization guide', 'Analytics tracking spreadsheet', 'Monetization playbook'],
-  },
-  {
-    id: 8,
-    title: 'Social Media Creator Pack',
-    category: 'content',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.8,
-    reviews: 278,
-    image: '/images/product-bundle-2.jpg',
-    description: 'All-in-one content creation bundle with Instagram templates, story designs, Reels scripts, hashtag strategies, and a complete content calendar system.',
-    features: ['100+ Instagram post templates', '30 story highlight covers', 'Reels script templates', 'Hashtag research guide', '12-month content calendar'],
-  },
-  {
-    id: 9,
-    title: 'Cinematic Video Presets',
-    category: 'content',
-    price: 199,
-    originalPrice: 499,
-    rating: 4.7,
-    reviews: 195,
-    image: '/images/product-bundle-3.jpg',
-    description: 'Professional-grade video editing LUTs and color grading presets. Transform your footage with Hollywood-style color science in one click.',
-    features: ['50 cinematic LUTs (.cube format)', 'Lightroom mobile presets', 'Color grading tutorial included', 'Before/after comparison guide', 'Compatible with all major editors'],
-  },
-];
+export interface FAQ {
+  id: number;
+  question: string;
+  answer: string;
+}
 
 export const reviews: Review[] = [
   { id: 1, productId: 1, name: 'Priya Sharma', rating: 5, date: '2026-04-15', comment: 'My 4-year-old absolutely loves this! The illustrations are beautiful and the tracing activities keep her engaged for hours.' },
@@ -345,7 +67,7 @@ export const reviews: Review[] = [
   { id: 10, productId: 8, name: 'Shruti Desai', rating: 5, date: '2026-04-14', comment: 'The content calendar alone is worth the price. My Instagram engagement has doubled since I started using this pack.' },
 ];
 
-export const testimonials = [
+export const testimonials: Testimonial[] = [
   { id: 1, name: 'Priya Sharma', role: 'Parent', text: 'The kids ebooks are absolutely delightful. My daughter looks forward to learning every day now. The quality exceeds everything else we have tried.' },
   { id: 2, name: 'Vikram Singh', role: 'Teacher', text: 'As a science teacher, I recommend the educational guides to all my students. They are comprehensive, well-structured, and actually make learning enjoyable.' },
   { id: 3, name: 'Karan Joshi', role: 'YouTuber', text: 'The content bundles transformed my channel. I went from struggling with thumbnails to having a consistent, professional brand look. Game changer!' },
@@ -354,7 +76,7 @@ export const testimonials = [
   { id: 6, name: 'Sneha Patel', role: 'Student', text: 'The Class 10 Science guide was my secret weapon for board exams. Scored 97%! The revision notes and practice problems are pure gold.' },
 ];
 
-export const faqs = [
+export const faqs: FAQ[] = [
   { id: 1, question: 'How do I receive my digital product after purchase?', answer: 'After completing your purchase, you will receive an instant download link on the order confirmation page. We also send the download link to your email within minutes. All products are delivered digitally — no shipping required!' },
   { id: 2, question: 'What payment methods do you accept?', answer: 'We accept UPI (Google Pay, PhonePe, Paytm), all major credit and debit cards, and digital wallets. All transactions are processed securely through our trusted payment gateway.' },
   { id: 3, question: 'Can I get a refund if I am not satisfied?', answer: 'Due to the digital nature of our products, we generally do not offer refunds once the download link has been accessed. However, if you experience any technical issues, please contact us and we will resolve it promptly.' },
